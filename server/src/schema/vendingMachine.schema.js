@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 
 export default gql`
   extend type Query {
-    vendingMachines: [VendingMachine!]
+    vendingMachines(page: Int, limit: Int): VendingMachinePagination!
   }
 
   type VendingMachine {
@@ -14,5 +14,12 @@ export default gql`
     createdBy: String
     updatedAt: Date
     updatedBy: String
+  }
+
+  type VendingMachinePagination {
+    count: Int!
+    page: Int!
+    limit: Int!
+    rows: [VendingMachine]
   }
 `;
