@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Layout, Row, Col, Tag } from 'antd';
+import { Layout, Row, Col, Tag, Spin } from 'antd';
 import { path } from 'ramda';
-import { useLazyQuery, gql } from '@apollo/client';
+import { useLazyQuery, useMutation, gql } from '@apollo/client';
 import ProductsInCart, { calculatePrice } from '../../components/ProductInCart';
 import ProductList from '../../components/ProductList';
 
@@ -56,6 +56,18 @@ const GET_VENDING_MACHINE = gql`
   }
 `;
 
+const CREATE_ORDER = gql`
+  mutation CreateOrder(
+    $machineId: ID!
+    $purchaseProducts: [PurchaseProduct!]!
+  ) {
+    createVendingMachineOrder(
+      machineId: $machineId
+      purchaseProducts: $purchaseProducts
+    )
+  }
+`;
+
 function HomePage() {
   // set machineCode, machineId in local storage for change machine
   // set balance in local storage for generate cash
@@ -70,7 +82,10 @@ function HomePage() {
   const [products, setProducts] = useState([]);
   const [productsInCart, setProductInCart] = useState([]);
   const [balance, setBalance] = useState(initialBalance);
-  const [getVendingMachine, {}] = useLazyQuery(GET_VENDING_MACHINE, {
+  const [
+    getVendingMachine,
+    { loading: getVendingMachineLoading },
+  ] = useLazyQuery(GET_VENDING_MACHINE, {
     onCompleted: (data) => {
       const vendingMachineProducts =
         path(['vendingMachine', 'products', 'rows'], data) || [];
@@ -84,10 +99,18 @@ function HomePage() {
       setProducts(_products);
     },
   });
+  const [createOrder, { loading: createOrderLoading }] = useMutation(
+    CREATE_ORDER,
+    {
+      onCompleted: () => {
+        setProductInCart([]);
+      },
+    }
+  );
 
   useEffect(() => {
     getVendingMachine({ variables: { machineId, page: 1, limit: 20 } });
-  }, []);
+  }, [getVendingMachine, machineId]);
 
   const addProductBack = ({ productId }) => {
     let newProducts = [...products];
@@ -150,54 +173,71 @@ function HomePage() {
 
   const onPurchase = () => {
     const newBalance = balance - calculatePrice(productsInCart);
-    setBalance(newBalance)
+    setBalance(newBalance);
 
-    console.log(productsInCart)
+    const purchaseProducts = productsInCart.map((product) => {
+      return {
+        productId: product.productId,
+        quantity: product.quantity,
+      };
+    });
+    createOrder({ variables: { machineId, purchaseProducts } });
   };
 
   return (
-    <Layout>
-      <Sider
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-        }}
-        width={500}
-      >
-        <div className="logo" style={{ textAlign: 'right', marginTop: 10 }}>
-          <Tag color="#108ee9">Machine Code: {machineCode}</Tag>
-        </div>
-
-        <Row type="flex" justify="center" align="top" style={{ marginTop: 50 }}>
-          <Col span={16}>
-            <ProductsInCart
-              products={productsInCart}
-              balance={balance}
-              onDeleteProductInCart={onDeleteProductInCart}
-              onPurchase={onPurchase}
-            ></ProductsInCart>
-          </Col>
-        </Row>
-      </Sider>
-      <Layout
-        className="site-layout"
-        style={{ marginLeft: 500, height: '100vh' }}
-      >
-        <Content style={{ margin: '24px 16px 0', overflow: 'scroll' }}>
-          <div
-            className="site-layout-background"
-            style={{ padding: 24, textAlign: 'center' }}
-          >
-            <ProductList
-              products={products}
-              onClickProduct={onClickProduct}
-            ></ProductList>
+    <Spin
+      tip="Loading..."
+      size="lg"
+      spinning={getVendingMachineLoading || createOrderLoading}
+    >
+      <Layout>
+        <Sider
+          style={{
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+          }}
+          width={500}
+        >
+          <div className="logo" style={{ textAlign: 'right', marginTop: 10 }}>
+            <Tag color="#108ee9">Machine Code: {machineCode}</Tag>
           </div>
-        </Content>
+
+          <Row
+            type="flex"
+            justify="center"
+            align="top"
+            style={{ marginTop: 50 }}
+          >
+            <Col span={16}>
+              <ProductsInCart
+                products={productsInCart}
+                balance={balance}
+                onDeleteProductInCart={onDeleteProductInCart}
+                onPurchase={onPurchase}
+              ></ProductsInCart>
+            </Col>
+          </Row>
+        </Sider>
+        <Layout
+          className="site-layout"
+          style={{ marginLeft: 500, height: '100vh' }}
+        >
+          <Content style={{ margin: '24px 16px 0', overflow: 'scroll' }}>
+            <div
+              className="site-layout-background"
+              style={{ padding: 24, textAlign: 'center' }}
+            >
+              <ProductList
+                products={products}
+                onClickProduct={onClickProduct}
+              ></ProductList>
+            </div>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </Spin>
   );
 }
 
