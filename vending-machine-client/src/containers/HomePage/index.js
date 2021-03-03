@@ -151,7 +151,6 @@ function HomePage() {
     newProducts[index].quantity = products[index].quantity - 1;
     setProducts(newProducts);
 
-    // add to cart
     addProductToCart({ productId, name, imageUrl, price });
   };
 
