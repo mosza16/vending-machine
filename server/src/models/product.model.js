@@ -56,6 +56,15 @@ const product = (sequelize, DataTypes) => {
       timestamps: false,
     }
   );
+
+  Product.associate = (models) => {
+    Product.hasOne(models.CategoryProduct, {
+      foreignKey: 'product_id',
+      sourceKey: 'product_id',
+      constraints: false
+    });
+  };
+
   return Product;
 };
 

@@ -4,6 +4,7 @@ import { GeneralFields } from './general.schema';
 export default gql`
   extend type Query {
     vendingMachines(page: Int, limit: Int): VendingMachinePagination!
+    vendingMachine(machineId: ID!): VendingMachine
   }
 
   type VendingMachine {
@@ -11,7 +12,7 @@ export default gql`
     machineCode: String!
     locationId: String!
     statusCode: String!
-    products(page: Int, limit: Int): MachineProductPagination
+    products(page: Int, limit: Int, search: SearchVendingMachineProductInput): MachineProductPagination
     ${GeneralFields}
   }
 
@@ -33,5 +34,9 @@ export default gql`
     page: Int!
     limit: Int!
     rows: [MachineProduct]
+  }
+
+  input SearchVendingMachineProductInput {
+    categories: [String!]
   }
 `;
