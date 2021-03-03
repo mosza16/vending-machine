@@ -7,6 +7,10 @@ export default gql`
     vendingMachine(machineId: ID!): VendingMachine
   }
 
+  extend type Mutation {
+    createVendingMachineOrder(machineId: ID!, purchaseProducts: [PurchaseProduct!]!):String
+  }
+
   type VendingMachine {
     machineId: ID!
     machineCode: String!
@@ -38,5 +42,10 @@ export default gql`
 
   input SearchVendingMachineProductInput {
     categories: [String!]
+  }
+
+  input PurchaseProduct {
+    productId: String!
+    quantity: Int!
   }
 `;

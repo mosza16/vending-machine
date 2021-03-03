@@ -16,7 +16,7 @@ const orderProduct = (sequelize, DataTypes) => {
       },
       thTotalPrices: {
         type: DataTypes.DECIMAL,
-        field: 'th_total_price',
+        field: 'th_total_prices',
         defaultValue: 0,
       },
       productId: {

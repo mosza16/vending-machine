@@ -11,17 +11,13 @@ const order = (sequelize, DataTypes) => {
       },
       thTotalPrices: {
         type: DataTypes.DECIMAL,
-        field: 'th_total_price',
+        field: 'th_total_prices',
         defaultValue: 0,
       },
       payMethod: {
         type: DataTypes.STRING,
         field: 'pay_method',
         defaultValue: 'CASH',
-      },
-      name: {
-        type: DataTypes.STRING,
-        field: 'name',
       },
       machineId: {
         type: DataTypes.STRING,

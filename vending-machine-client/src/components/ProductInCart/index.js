@@ -1,6 +1,6 @@
 import { Row, Col, Card, List, Button } from 'antd';
 
-function calculatePrice(products = []) {
+export function calculatePrice(products = []) {
   if (products.length < 1) return 0;
   return products.reduce((sum, product) => {
     sum += product.price;
@@ -12,6 +12,7 @@ function ProductsInCart({
   products = [],
   balance = 100,
   onDeleteProductInCart,
+  onPurchase,
 }) {
   const totalPrice = calculatePrice(products);
   const isCanPurchase = balance >= totalPrice && products.length > 0;
@@ -69,7 +70,12 @@ function ProductsInCart({
       title="Order List"
       bordered={false}
       actions={[
-        <Button type="primary" size="large" disabled={!isCanPurchase}>
+        <Button
+          type="primary"
+          size="large"
+          disabled={!isCanPurchase}
+          onClick={onPurchase}
+        >
           Purchase
         </Button>,
       ]}

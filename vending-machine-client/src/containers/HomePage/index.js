@@ -1,46 +1,93 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Layout, Row, Col, Tag } from 'antd';
-import ProductsInCart from '../../components/ProductInCart';
+import { path } from 'ramda';
+import { useLazyQuery, gql } from '@apollo/client';
+import ProductsInCart, { calculatePrice } from '../../components/ProductInCart';
 import ProductList from '../../components/ProductList';
 
 const { Content, Sider } = Layout;
 
-const initialProducts = [
-  {
-    productId: 'p1',
-    name: 'Pepsi',
-    imageUrl:
-      'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
-    price: 10,
-    quantity: 20,
-  },
-  {
-    productId: 'p2',
-    name: 'Pepsi',
-    imageUrl:
-      'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
-    price: 10,
-    quantity: 0,
-  },
-  {
-    productId: 'p3',
-    name: 'Pepsi',
-    imageUrl:
-      'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
-    price: 10,
-    quantity: 10,
-  },
-];
+// const initialProducts = [
+//   {
+//     productId: 'p1',
+//     name: 'Pepsi',
+//     imageUrl:
+//       'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
+//     price: 10,
+//     quantity: 20,
+//   },
+//   {
+//     productId: 'p2',
+//     name: 'Pepsi',
+//     imageUrl:
+//       'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
+//     price: 10,
+//     quantity: 0,
+//   },
+//   {
+//     productId: 'p3',
+//     name: 'Pepsi',
+//     imageUrl:
+//       'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
+//     price: 10,
+//     quantity: 10,
+//   },
+// ];
+
+const GET_VENDING_MACHINE = gql`
+  query VendingMachine($machineId: ID!, $page: Int!, $limit: Int!) {
+    vendingMachine(machineId: $machineId) {
+      machineId
+      statusCode
+      locationId
+      products(page: $page, limit: $limit) {
+        count
+        rows {
+          quantity
+          product {
+            productId
+            name
+            imageUrl
+            price: thPrice
+          }
+        }
+      }
+    }
+  }
+`;
 
 function HomePage() {
+  // set machineCode, machineId in local storage for change machine
+  // set balance in local storage for generate cash
   const machineCode =
     localStorage.getItem('vending_machine_machine_code') || 'Unknown';
-  const balance = Number(
+  const machineId =
+    localStorage.getItem('vending_machine_machine_id') || 'test';
+  const initialBalance = Number(
     localStorage.getItem('vending_machine_balance') || '0'
   );
 
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
   const [productsInCart, setProductInCart] = useState([]);
+  const [balance, setBalance] = useState(initialBalance);
+  const [getVendingMachine, {}] = useLazyQuery(GET_VENDING_MACHINE, {
+    onCompleted: (data) => {
+      const vendingMachineProducts =
+        path(['vendingMachine', 'products', 'rows'], data) || [];
+      const _products = vendingMachineProducts.map((vendingMachineProduct) => ({
+        productId: path(['product', 'productId'], vendingMachineProduct),
+        name: path(['product', 'name'], vendingMachineProduct),
+        imageUrl: path(['product', 'imageUrl'], vendingMachineProduct),
+        price: path(['product', 'price'], vendingMachineProduct),
+        quantity: path(['quantity'], vendingMachineProduct),
+      }));
+      setProducts(_products);
+    },
+  });
+
+  useEffect(() => {
+    getVendingMachine({ variables: { machineId, page: 1, limit: 20 } });
+  }, []);
 
   const addProductBack = ({ productId }) => {
     let newProducts = [...products];
@@ -101,6 +148,13 @@ function HomePage() {
     addProductBack({ productId });
   };
 
+  const onPurchase = () => {
+    const newBalance = balance - calculatePrice(productsInCart);
+    setBalance(newBalance)
+
+    console.log(productsInCart)
+  };
+
   return (
     <Layout>
       <Sider
@@ -122,6 +176,7 @@ function HomePage() {
               products={productsInCart}
               balance={balance}
               onDeleteProductInCart={onDeleteProductInCart}
+              onPurchase={onPurchase}
             ></ProductsInCart>
           </Col>
         </Row>
