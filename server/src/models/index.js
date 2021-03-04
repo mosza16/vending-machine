@@ -32,8 +32,6 @@ if (process.env.DATABASE_URL) {
 }
 
 const models = {
-  // User: sequelize.import('./user'),
-  // Message: sequelize.import('./message'),
   Category: sequelize.import('./category.model'),
   CategoryProduct: sequelize.import('./categoryProduct.model'),
   Order: sequelize.import('./order.model'),

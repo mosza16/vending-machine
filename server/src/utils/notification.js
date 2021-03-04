@@ -18,10 +18,10 @@ export const sendOutOfStockNotification = async (
   try {
     const response = await client.createNotification(notification);
     console.log(response.body.id);
-  } catch (e) {
-    if (e instanceof OneSignal.HTTPError) {
-      console.error(e.statusCode);
-      console.error(e.body);
+  } catch (error) {
+    if (error instanceof OneSignal.HTTPError) {
+      console.error(error.statusCode);
+      console.error(error.body);
     }
   }
 };

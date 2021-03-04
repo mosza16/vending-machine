@@ -51,13 +51,6 @@ const order = (sequelize, DataTypes) => {
     Order.hasOne(models.VendingMachine, {
       foreignKey: 'machine_id',
     });
-
-    // Order.belongsToMany(models.Product, {
-    //   through: 'order_product',
-    //   as: 'products',
-    //   foreignKey: 'order_id',
-    //   otherKey: 'product_id',
-    // });
   };
   return Order;
 };
