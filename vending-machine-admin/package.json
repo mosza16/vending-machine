@@ -17,6 +17,7 @@
     "ramda": "^0.27.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-onesignal": "^1.7.0",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.0.1",
     "webfontloader": "^1.6.28"

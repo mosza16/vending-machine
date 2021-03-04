@@ -26,6 +26,7 @@
     "graphql-iso-date": "^3.6.1",
     "graphql-resolvers": "^0.3.2",
     "lodash": "^4.17.11",
+    "onesignal-node": "^3.2.1",
     "pg": "^7.9.0",
     "ramda": "^0.27.1",
     "sequelize": "^5.2.1",

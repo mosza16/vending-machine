@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Layout, Row, Col, Tag, Spin, Popover, Button } from 'antd';
+import { useState } from 'react';
 import { path } from 'ramda';
-import { useLazyQuery, useMutation, gql } from '@apollo/client';
+import { useLazyQuery, gql } from '@apollo/client';
 
 import {
   GoogleMap,
@@ -22,38 +21,57 @@ const center = {
   lng: 100.523186,
 };
 
-const locations = [
-  {
-    lat: 13.736717,
-    lng: 100.523186,
-  },
-  {
-    lat: 13.736718,
-    lng: 100.523186,
-  },
-  {
-    lat: 13.836718,
-    lng: 100.523189,
-  },
-];
-
+const GET_VENDING_MACHINES = gql`
+  query VendingMachines($page: Int!, $limit: Int!) {
+    vendingMachines(page: $page, limit: $limit) {
+      rows {
+        machineId
+        machineCode
+        location {
+          latitude
+          longitude
+        }
+      }
+    }
+  }
+`;
 function VendingMachineMapPage() {
-  const onLoad = useCallback(function onLoad(mapInstance) {});
+  const [vendingMachinesLocation, setVendingMachinesLocation] = useState([]);
+  const [getVendingMachines] = useLazyQuery(GET_VENDING_MACHINES, {
+    onCompleted: (data) => {
+      const vendingMachines = path(['vendingMachines', 'rows'], data);
+      const _vendingMachinesLocation = vendingMachines.map(
+        (vendingMachine) => ({
+          machineId: path(['machineId'], vendingMachine),
+          machineCode: path(['machineCode'], vendingMachine),
+          lat: Number(path(['location', 'latitude'], vendingMachine) || 0),
+          lng: Number(path(['location', 'longitude'], vendingMachine) || 0),
+        })
+      );
+      setVendingMachinesLocation(_vendingMachinesLocation);
+    },
+  });
+  const onLoad = () => {
+    getVendingMachines({
+      variables: { page: 1, limit: 1000 },
+    });
+  };
+
   return (
     <LoadScript googleMapsApiKey={API_KEY}>
       <GoogleMap
         onLoad={onLoad}
         mapContainerStyle={containerStyle}
         center={center}
-        zoom={3}
+        zoom={10}
       >
         <MarkerClusterer options={{ maxZoom: 15 }}>
           {(clusterer) =>
-            locations.map((location) => (
+            vendingMachinesLocation.map(({ lat, lng, machineCode }) => (
               <Marker
-                title="E0002"
-                key={`${location.lat}${location.lng}`}
-                position={location}
+                title={machineCode}
+                key={`${lat}${lng}`}
+                position={{ lat, lng }}
                 clusterer={clusterer}
               />
             ))
