@@ -117,6 +117,14 @@ export default {
             })
           );
         });
+
+        // check and send notification to admin
+        const notificationProducts = newVendingMachineProducts.filter((newVendingMachineProducts) => {
+          return newVendingMachineProducts.quantity < 10
+        })
+        if(notificationProducts.length > 0){
+          // logic send notification here
+        }
         return 'ok';
       } catch (error) {
         console.error(error);
