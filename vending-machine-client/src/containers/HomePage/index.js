@@ -2,37 +2,13 @@ import { useState, useEffect } from 'react';
 import { Layout, Row, Col, Tag, Spin } from 'antd';
 import { path } from 'ramda';
 import { useLazyQuery, useMutation, gql } from '@apollo/client';
+import { LoadingOutlined } from '@ant-design/icons';
 import ProductsInCart, { calculatePrice } from '../../components/ProductInCart';
 import ProductList from '../../components/ProductList';
 
 const { Content, Sider } = Layout;
+const loadingIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-// const initialProducts = [
-//   {
-//     productId: 'p1',
-//     name: 'Pepsi',
-//     imageUrl:
-//       'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
-//     price: 10,
-//     quantity: 20,
-//   },
-//   {
-//     productId: 'p2',
-//     name: 'Pepsi',
-//     imageUrl:
-//       'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
-//     price: 10,
-//     quantity: 0,
-//   },
-//   {
-//     productId: 'p3',
-//     name: 'Pepsi',
-//     imageUrl:
-//       'https://www.colbeck.co.uk/wp-content/uploads/2017/11/Pepsi-Can.jpg',
-//     price: 10,
-//     quantity: 10,
-//   },
-// ];
 
 const GET_VENDING_MACHINE = gql`
   query VendingMachine($machineId: ID!, $page: Int!, $limit: Int!) {
@@ -129,7 +105,7 @@ function HomePage() {
     );
     if (index > -1) {
       newProductsInCart[index].quantity = productsInCart[index].quantity + 1;
-      newProductsInCart[index].price = newProductsInCart[index].price + price;
+      newProductsInCart[index].price = productsInCart[index].price + price;
     } else {
       newProductsInCart.push({
         productId,
@@ -187,6 +163,7 @@ function HomePage() {
     <Spin
       tip="Loading..."
       size="lg"
+      indicator={loadingIcon}
       spinning={getVendingMachineLoading || createOrderLoading}
     >
       <Layout>

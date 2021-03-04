@@ -9,7 +9,6 @@ function ProductItem({
   onClickProduct,
 }) {
   const isOutOfStock = quantity < 1;
-  console.log(productId, 'render');
   return (
     <Col span={8}>
       {isOutOfStock ? (
