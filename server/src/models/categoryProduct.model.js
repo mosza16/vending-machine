@@ -45,7 +45,7 @@ const categoryProduct = (sequelize, DataTypes) => {
   CategoryProduct.associate = (models) => {
     CategoryProduct.hasOne(models.Product, {
       foreignKey: 'product_id',
-      constraints: false
+      constraints: false,
     });
     CategoryProduct.hasOne(models.Category, {
       foreignKey: 'category_id',

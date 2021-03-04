@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Layout, Row, Col, Tag, Spin } from 'antd';
+import { Layout, Row, Col, Tag, Spin, message } from 'antd';
 import { path } from 'ramda';
 import { useLazyQuery, useMutation, gql } from '@apollo/client';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -80,6 +80,7 @@ function HomePage() {
     {
       onCompleted: () => {
         setProductInCart([]);
+        message.success('Successfully purchased');
       },
     }
   );

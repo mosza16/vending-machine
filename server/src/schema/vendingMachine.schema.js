@@ -14,9 +14,10 @@ export default gql`
   type VendingMachine {
     machineId: ID!
     machineCode: String!
-    locationId: String!
+    locationId: String
     statusCode: String!
     products(page: Int, limit: Int, search: SearchVendingMachineProductInput): MachineProductPagination
+    location: VendingMachineLocation
     ${GeneralFields}
   }
 
@@ -38,6 +39,17 @@ export default gql`
     page: Int!
     limit: Int!
     rows: [MachineProduct]
+  }
+
+  type VendingMachineLocation {
+    machineId: ID!
+    locationId: ID!
+    subdistrictCode: String!
+    districtCode: String!
+    provinceCode: String!
+    countryCode: String!
+    longitude: String!
+    latitude: String!
   }
 
   input SearchVendingMachineProductInput {

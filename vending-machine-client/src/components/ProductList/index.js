@@ -17,7 +17,9 @@ function ProductItem({
           cover={<img alt={name} src={imageUrl} />}
         >
           <Card.Meta
-            title={<span style={{ color: 'red' }}>Out of Stock</span>}
+            title={
+              <span style={{ color: 'red' }}>Out of Stock</span>
+            }
           />
         </Card>
       ) : (
@@ -28,7 +30,8 @@ function ProductItem({
             onClickProduct({ productId, name, imageUrl, quantity, price })
           }
         >
-          <Card.Meta title={`${name} ${price} Baht (${quantity})`} />
+          <Card.Meta title={<span>{name}</span>} />
+          <Card.Meta title={<span>{`${price} Baht (${quantity})`}</span>} />
         </Card>
       )}
     </Col>

@@ -50,10 +50,12 @@ const vendingMachineProduct = (sequelize, DataTypes) => {
   VendingMachineProduct.associate = (models) => {
     VendingMachineProduct.hasOne(models.Product, {
       foreignKey: 'product_id',
+      sourceKey: 'product_id',
     });
 
     VendingMachineProduct.hasOne(models.VendingMachine, {
       foreignKey: 'machine_id',
+      sourceKey: 'machine_id',
     });
   };
   return VendingMachineProduct;

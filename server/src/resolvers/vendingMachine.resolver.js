@@ -119,10 +119,12 @@ export default {
         });
 
         // check and send notification to admin
-        const notificationProducts = newVendingMachineProducts.filter((newVendingMachineProducts) => {
-          return newVendingMachineProducts.quantity < 10
-        })
-        if(notificationProducts.length > 0){
+        const notificationProducts = newVendingMachineProducts.filter(
+          (newVendingMachineProducts) => {
+            return newVendingMachineProducts.quantity < 10;
+          }
+        );
+        if (notificationProducts.length > 0) {
           // logic send notification here
         }
         return 'ok';
@@ -134,6 +136,15 @@ export default {
   },
 
   VendingMachine: {
+    location: async (parent, args, { models }) => {
+      const { machineId } = parent;
+      const data = await models.VendingMachineLocation.findOne({
+        where: {
+          machine_id: machineId,
+        },
+      });
+      return data;
+    },
     products: async (parent, args, { models }) => {
       const { machineId } = parent;
       const categories = path(['search', 'categories'], args);
