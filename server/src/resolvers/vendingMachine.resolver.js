@@ -3,6 +3,7 @@ import { path } from 'ramda';
 import { uuid } from 'uuidv4';
 import { getLimitOffset } from '../utils/pagination';
 import { calculateProductsPrice } from '../utils/price';
+import { sendOutOfStockNotification } from '../utils/notification';
 import { sequelize } from '../models';
 
 export default {
@@ -27,7 +28,11 @@ export default {
     },
   },
   Mutation: {
-    createVendingMachineOrder: async (parent, args, { models }) => {
+    createVendingMachineOrder: async (
+      parent,
+      args,
+      { models, oneSignalClient }
+    ) => {
       const { machineId, purchaseProducts = [] } = args;
       const productIds = purchaseProducts.map(({ productId }) => productId);
       const vendingMachineProducts = await models.VendingMachineProduct.findAll(
@@ -125,7 +130,16 @@ export default {
           }
         );
         if (notificationProducts.length > 0) {
-          // logic send notification here
+          const vendingMachine = await models.VendingMachine.findOne({
+            where: {
+              machine_id: { [Sequelize.Op.eq]: machineId },
+            },
+          });
+          sendOutOfStockNotification(
+            oneSignalClient,
+            vendingMachine.machineCode,
+            models
+          );
         }
         return 'ok';
       } catch (error) {
