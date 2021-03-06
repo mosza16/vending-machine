@@ -35,7 +35,7 @@ const GET_VENDING_MACHINE = gql`
 const CREATE_ORDER = gql`
   mutation CreateOrder(
     $machineId: ID!
-    $purchaseProducts: [PurchaseProduct!]!
+    $purchaseProducts: [PurchaseProductInput!]!
   ) {
     createVendingMachineOrder(
       machineId: $machineId

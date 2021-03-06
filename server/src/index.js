@@ -3,9 +3,8 @@ import cors from 'cors';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import * as OneSignal from 'onesignal-node';
-
+import redis from 'redis';
 import http from 'http';
-
 import resolvers from './resolvers';
 import schema from './schema';
 import models, { sequelize } from './models';
@@ -13,6 +12,18 @@ import models, { sequelize } from './models';
 const app = express();
 
 app.use(cors());
+
+// setup redis client
+const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST || 'localhost',
+  port: process.env.REDIS_PORT || 6379,
+});
+redisClient.on('error', (error) => {
+  console.log('Could not establish a connection with redis. ' + error);
+});
+redisClient.on('connect', () => {
+  console.log('Connected to redis successfully');
+});
 
 // setup one signal
 const oneSignalClient = new OneSignal.Client(
@@ -36,18 +47,14 @@ const server = new ApolloServer({
       message,
     };
   },
-  context: async ({ req, connection }) => {
-    if (connection) {
-      return {
-        models,
-        oneSignalClient,
-      };
-    }
-
+  context: async ({ req }) => {
     if (req) {
+      const sessionId = req.headers['x-session-id'];
       return {
+        sessionId,
         models,
         oneSignalClient,
+        redisClient,
       };
     }
   },
@@ -56,7 +63,6 @@ const server = new ApolloServer({
 server.applyMiddleware({ app, path: '/graphql' });
 
 const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
 
 const port = process.env.PORT || 4040;
 

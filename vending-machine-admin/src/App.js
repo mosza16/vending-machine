@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
-import containers from './containers';
+import Routers from './routers';
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_GRAPHQL_URL,
@@ -10,7 +10,9 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <div className="App">{containers()}</div>
+      <div className="App">
+        <Routers />
+      </div>
     </ApolloProvider>
   );
 }

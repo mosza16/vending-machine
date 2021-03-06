@@ -11,14 +11,10 @@ const adminUser = (sequelize, DataTypes) => {
       },
       email: {
         type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
         field: 'email',
       },
       phone: {
         type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
         field: 'phone',
       },
       password: {

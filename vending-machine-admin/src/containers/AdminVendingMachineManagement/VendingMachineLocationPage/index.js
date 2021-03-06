@@ -8,9 +8,9 @@ import {
   Marker,
   MarkerClusterer,
 } from '@react-google-maps/api';
-import districts from '../../utils/thailand-location/districts.json';
-import provinces from '../../utils/thailand-location/provinces.json';
-import subDistricts from '../../utils/thailand-location/subDistricts.json';
+import districts from '../../../utils/thailand-location/districts.json';
+import provinces from '../../../utils/thailand-location/provinces.json';
+import subDistricts from '../../../utils/thailand-location/subDistricts.json';
 
 const API_KEY = process.env.REACT_APP_GOOGLE_MAP_API_KEY;
 
@@ -77,7 +77,7 @@ function getAddressNameFromJson(vendingMachine) {
   };
 }
 
-function VendingMachineMapPage() {
+function VendingMachineLocationPage() {
   const limit = 10;
   const [vendingMachinesLocation, setVendingMachinesLocation] = useState([]);
   const [page, setPage] = useState(1);
@@ -161,4 +161,4 @@ function VendingMachineMapPage() {
   );
 }
 
-export default VendingMachineMapPage;
+export default VendingMachineLocationPage;

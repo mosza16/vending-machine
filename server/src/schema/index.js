@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express';
 
 import vendingMachineSchema from './vendingMachine.schema';
 import productSchema from './product.schema';
+import userSchema from './user.schema';
 
 const linkSchema = gql`
   scalar Date
@@ -19,4 +20,4 @@ const linkSchema = gql`
   }
 `;
 
-export default [linkSchema, vendingMachineSchema, productSchema];
+export default [linkSchema, vendingMachineSchema, productSchema, userSchema];

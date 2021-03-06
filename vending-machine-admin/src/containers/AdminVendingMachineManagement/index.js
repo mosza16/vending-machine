@@ -1,10 +1,10 @@
 import { Layout, Menu, Breadcrumb } from 'antd';
 import OneSignal, { useOneSignalSetup } from 'react-onesignal';
+import { useLocation } from 'react-router-dom';
 import './index.css';
-import VendingMachineMapPage from './VendingMachineMapPage';
 const { Header, Content } = Layout;
 
-function Containers() {
+function AdminVendingMachineManagement(props) {
   // set notification
   useOneSignalSetup(async () => {
     const externalUserId = localStorage.getItem(
@@ -13,27 +13,25 @@ function Containers() {
     OneSignal.registerForPushNotifications();
     await OneSignal.setExternalUserId(externalUserId);
   });
+
+  const location = useLocation();
+
   return (
     <Layout className="layout">
       <Header>
         <div className="logo" />
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-          <Menu.Item key="1">Home</Menu.Item>
-          <Menu.Item key="2" active={true}>
-            Map
-          </Menu.Item>
+        <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
+          <Menu.Item key="/vending-machine/locations">Locations</Menu.Item>
         </Menu>
       </Header>
       <Content style={{ padding: '0 50px' }}>
         <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Vending Machines Map</Breadcrumb.Item>
+          <Breadcrumb.Item>Vending Machines Locations</Breadcrumb.Item>
         </Breadcrumb>
-        <div className="site-layout-content">
-          <VendingMachineMapPage></VendingMachineMapPage>
-        </div>
+        <div className="site-layout-content">{props.children}</div>
       </Content>
     </Layout>
   );
 }
 
-export default Containers;
+export default AdminVendingMachineManagement;

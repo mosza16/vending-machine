@@ -130,16 +130,7 @@ export default {
           }
         );
         if (notificationProducts.length > 0) {
-          const vendingMachine = await models.VendingMachine.findOne({
-            where: {
-              machine_id: { [Sequelize.Op.eq]: machineId },
-            },
-          });
-          sendOutOfStockNotification(
-            oneSignalClient,
-            vendingMachine.machineCode,
-            models
-          );
+          sendOutOfStockNotification(oneSignalClient, models, machineId);
         }
         return 'ok';
       } catch (error) {

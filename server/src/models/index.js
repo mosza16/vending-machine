@@ -41,6 +41,7 @@ const models = {
   VendingMachineLocation: sequelize.import('./vendingMachineLocation.model'),
   VendingMachineProduct: sequelize.import('./vendingMachineProduct.model'),
   VendingMachineStatus: sequelize.import('./vendingMachineStatus.model'),
+  AdminUser: sequelize.import('./adminUser.model.js'),
 };
 
 Object.keys(models).forEach((key) => {
