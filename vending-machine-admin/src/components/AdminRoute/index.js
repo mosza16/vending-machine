@@ -17,7 +17,7 @@ const AdminRoute = ({ ...rest }) => {
   });
   useEffect(() => {
     checkAuth();
-  }, [location]);
+  }, [location, checkAuth]);
 
   return <Route {...rest} />;
 };
