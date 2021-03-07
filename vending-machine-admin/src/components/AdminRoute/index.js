@@ -11,7 +11,7 @@ const CHECK_AUTH = gql`
 const AdminRoute = ({ ...rest }) => {
   const location = useLocation();
   const [checkAuth] = useLazyQuery(CHECK_AUTH, {
-    onError: (error) => {
+    onError: () => {
       window.location.href = '/login';
     },
   });
