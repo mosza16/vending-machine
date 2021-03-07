@@ -8,6 +8,7 @@ export default gql`
   extend type Mutation {
     createAdminUser(user: CreateAdminUserInput!): String
     login(username: String!, password: String!): Login
+    logout: String
   }
 
   type Login {

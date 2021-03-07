@@ -2,12 +2,13 @@ import Sequelize from 'sequelize';
 import { AuthenticationError } from 'apollo-server';
 import bcrypt from 'bcrypt';
 import { uuid } from 'uuidv4';
+import { encrypt, decrypt } from '../utils/session';
 
 export default {
   Query: {
     checkAuthenticated: async (parent, args, { sessionId, redisClient }) => {
       const value = await new Promise((resolve) => {
-        redisClient.get(`session:${sessionId}`, (_, _value) => {
+        redisClient.get(`session:${decrypt(sessionId)}`, (_, _value) => {
           resolve(_value);
         });
       });
@@ -43,9 +44,15 @@ export default {
         JSON.stringify({ userId: adminUser.userId })
       );
       return {
-        session: _sessionId,
+        session: encrypt(_sessionId),
         userId: adminUser.userId,
       };
+    },
+    logout: async (parent, args, { redisClient, sessionId }) => {
+      if (sessionId) {
+        redisClient.del(`session:${decrypt(sessionId)}`);
+      }
+      return 'ok';
     },
     createAdminUser: async (parent, args, { models }) => {
       const {
