@@ -25,7 +25,7 @@ function LoginPage() {
     }
   };
 
-  const [login, { data, error }] = useMutation(LOGIN, {
+  const [login] = useMutation(LOGIN, {
     onCompleted: (data) => {
       const {
         login: { userId, session },

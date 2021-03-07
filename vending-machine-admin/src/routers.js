@@ -3,21 +3,21 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect,
 } from 'react-router-dom';
 import VendingMachineLocationPage from './containers/AdminVendingMachineManagement/VendingMachineLocationPage';
 import AdminVendingMachineManagement from './containers/AdminVendingMachineManagement';
 import LoginPage from './containers/LoginPage';
+import AdminRoute from './components/AdminRoute';
 
 function renderAdminRouters() {
   return (
     <Route path="/vending-machine/*" exact>
       <AdminVendingMachineManagement>
         <Switch>
-          <Route path="/vending-machine/locations" exact>
+          <AdminRoute path="/vending-machine/locations" exact>
             <VendingMachineLocationPage />
-          </Route>
+          </AdminRoute>
           <Route>
             <Redirect to="/404"></Redirect>
           </Route>

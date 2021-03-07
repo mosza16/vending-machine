@@ -1,4 +1,4 @@
-import { Layout, Menu, Breadcrumb } from 'antd';
+import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import OneSignal, { useOneSignalSetup } from 'react-onesignal';
 import { useLocation } from 'react-router-dom';
 import './index.css';
@@ -13,15 +13,32 @@ function AdminVendingMachineManagement(props) {
     OneSignal.registerForPushNotifications();
     await OneSignal.setExternalUserId(externalUserId);
   });
-
   const location = useLocation();
+
+  const onClickLogout = async () => {
+    const externalUserId = localStorage.getItem(
+      'vending_machine_admin_onesignal_user_id'
+    );
+    await OneSignal.removeExternalUserId(externalUserId);
+
+    localStorage.removeItem('vending_machine_admin_onesignal_user_id');
+    localStorage.removeItem('vending_machine_admin_session_id');
+
+    window.location.href = '/login';
+  };
 
   return (
     <Layout className="layout">
       <Header>
-        <div className="logo" />
         <Menu theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
           <Menu.Item key="/vending-machine/locations">Locations</Menu.Item>
+          <Button
+            type="primary"
+            style={{ float: 'right', margin: '16px 0px 16px 0px' }}
+            onClick={onClickLogout}
+          >
+            Logout
+          </Button>
         </Menu>
       </Header>
       <Content style={{ padding: '0 50px' }}>
